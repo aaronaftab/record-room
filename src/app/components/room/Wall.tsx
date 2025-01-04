@@ -12,8 +12,8 @@ interface WallProps {
 
 export const Wall = ({ position, rotation, size, hasWindow = false }: WallProps) => {
   const textures = useTexture({
-    colorMap: '/record-room/textures/wood084/color.jpg',
-    normalMap: '/record-room/textures/wood084/normal.jpg',
+    colorMap: '/textures/wood084/color.jpg',
+    normalMap: '/textures/wood084/normal.jpg',
   });
 
   React.useEffect(() => {
@@ -26,11 +26,49 @@ export const Wall = ({ position, rotation, size, hasWindow = false }: WallProps)
   }, [textures]);
 
   if (hasWindow) {
+    const windowWidth = 6;  // Window width
+    const windowHeight = 6;  // Window height
+    const sideWidth = (size[0] - windowWidth) / 2;  // Width of side panels
+    const topBottomHeight = (size[1] - windowHeight) / 2;  // Height of top/bottom panels
+
     return (
       <group position={position} rotation={rotation}>
-        {/* Main wall */}
-        <mesh>
-          <planeGeometry args={size} />
+        {/* Left wall section */}
+        <mesh position={[-(windowWidth/2 + sideWidth/2), 0, 0]}>
+          <planeGeometry args={[sideWidth, size[1]]} />
+          <meshStandardMaterial 
+            map={textures.colorMap}
+            normalMap={textures.normalMap}
+            normalScale={new THREE.Vector2(0.8, 0.8)}
+            roughness={0.7}
+          />
+        </mesh>
+
+        {/* Right wall section */}
+        <mesh position={[windowWidth/2 + sideWidth/2, 0, 0]}>
+          <planeGeometry args={[sideWidth, size[1]]} />
+          <meshStandardMaterial 
+            map={textures.colorMap}
+            normalMap={textures.normalMap}
+            normalScale={new THREE.Vector2(0.8, 0.8)}
+            roughness={0.7}
+          />
+        </mesh>
+
+        {/* Top wall section */}
+        <mesh position={[0, windowHeight/2 + topBottomHeight/2, 0]}>
+          <planeGeometry args={[windowWidth, topBottomHeight]} />
+          <meshStandardMaterial 
+            map={textures.colorMap}
+            normalMap={textures.normalMap}
+            normalScale={new THREE.Vector2(0.8, 0.8)}
+            roughness={0.7}
+          />
+        </mesh>
+
+        {/* Bottom wall section */}
+        <mesh position={[0, -(windowHeight/2 + topBottomHeight/2), 0]}>
+          <planeGeometry args={[windowWidth, topBottomHeight]} />
           <meshStandardMaterial 
             map={textures.colorMap}
             normalMap={textures.normalMap}
@@ -41,9 +79,9 @@ export const Wall = ({ position, rotation, size, hasWindow = false }: WallProps)
         
         {/* Window section */}
         <WindowView 
-          position={[0, 0, 0.01]} 
+          position={[0, 0, 0.02]} 
           rotation={[0, 0, 0]} 
-          size={[4, 6]}
+          size={[windowWidth, windowHeight]}
         />
       </group>
     );
